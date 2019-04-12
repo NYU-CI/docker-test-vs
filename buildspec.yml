@@ -1,7 +1,7 @@
 version: 0.2
 
 phases:
-  isntall:
+  install:
     commands:
       - echo Installing the Anchore scanner...
       - mkdir ~/aevolume
