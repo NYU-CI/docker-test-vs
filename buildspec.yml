@@ -1,17 +1,17 @@
 version: 0.2
 
 phases:
-#  install:
-#    commands:
-#      - echo Installing the Anchore scanner...
-#      - mkdir ~/aevolume
-#      - mkdir ~/aevolume/config
-#      - mkdir ~/aevolume/db
+  install:
+    commands:
+      - echo Installing the Anchore scanner...
+      - mkdir ~/aevolume
+      - mkdir ~/aevolume/config
+      - mkdir ~/aevolume/db
 #      - cd ~/aevolume
-#      - curl https://raw.githubusercontent.com/anchore/anchore-engine/master/scripts/docker-compose/docker-compose.yaml -o ~/aevolume/docker-compose.yaml
-#      - curl https://raw.githubusercontent.com/anchore/anchore-engine/master/scripts/docker-compose/config.yaml -o ~/aevolume/config/config.yaml
-#      - docker-compose pull
-#      - docker-compose up -d
+      - curl https://raw.githubusercontent.com/anchore/anchore-engine/master/scripts/docker-compose/docker-compose.yaml -o ~/aevolume/docker-compose.yaml
+      - curl https://raw.githubusercontent.com/anchore/anchore-engine/master/scripts/docker-compose/config.yaml -o ~/aevolume/config/config.yaml
+      - docker-compose -f ~/aevolume/docker-compose.yaml pull
+      - docker-compose -f ~/aevolume/docker-compose.yaml up -d
 
   pre_build:
     commands:
