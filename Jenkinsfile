@@ -21,7 +21,7 @@ pipeline {
                 echo 'Building..'
                 sh 'docker build . -t ${IMAGE_NAME}:ci'
 //		sh 'docker push ${IMAGE_NAME}:${GIT_COMMIT_HASH}'
-		sh 'docker push ${IMAGE_NAME}:candidate'
+		sh 'docker push ${IMAGE_NAME}:ci'
             }
         }
         stage('Scan') {
