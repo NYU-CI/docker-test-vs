@@ -7,11 +7,11 @@ phases:
       - mkdir ~/aevolume
       - mkdir ~/aevolume/config
       - mkdir ~/aevolume/db
-      - cd ~/aevolume
+#      - cd ~/aevolume
       - curl https://raw.githubusercontent.com/anchore/anchore-engine/master/scripts/docker-compose/docker-compose.yaml -o ~/aevolume/docker-compose.yaml
       - curl https://raw.githubusercontent.com/anchore/anchore-engine/master/scripts/docker-compose/config.yaml -o ~/aevolume/config/config.yaml
-      - docker-compose pull
-      - docker-compose up -d
+      - docker-compose -f ~/aevolume/docker-compose.yaml pull
+      - docker-compose -f ~/aevolume/docker-compose.yaml up -d
 
   pre_build:
     commands:
@@ -21,6 +21,7 @@ phases:
       - REPOSITORY_URI=441870321480.dkr.ecr.us-east-1.amazonaws.com/test-image-vuln-scan-base
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - ANCHORE_FAIL_ON_POLICY=true
 
   build:
     commands:
@@ -32,6 +33,14 @@ phases:
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Pushing the Docker images...
+      
+      - anchore-cli image add $REPOSITORY_URI:latest
+      - echo "Waiting for image to finish analysis"
+      - anchore-cli image wait $REPOSITORY_URI:latest
+      - echo "Analysis complete"
+      - if [ "$ANCHORE_FAIL_ON_POLICY" = "true" ] ; then anchore-cli evaluate check jvalance/node_critical_fail:latest  ; fi
+      
+      - echo "Pushing the Docker images..."
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
+
