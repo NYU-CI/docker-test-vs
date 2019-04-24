@@ -44,9 +44,9 @@ pipeline {
         stage('Push Image') {
             steps {
             	sh '$(aws ecr get-login --no-include-email)'
-		sh 'docker tag ${IMAGE_NAME}:ci '
-		sh 'docker tag ${IMAGE_NAME}:${IMAGE_TAG}'
+		sh 'docker tag ${IMAGE_NAME}:ci ${IMAGE_NAME}:${IMAGE_TAG}'
                 sh 'docker push ${IMAGE_NAME}:${IMAGE_TAG}'
+		sh 'docker tag ${IMAGE_NAME}:ci ${IMAGE_NAME}:${GIT_COMMIT_HASH}'
                 sh 'docker push ${IMAGE_NAME}:${GIT_COMMIT_HASH}'
             }
         }
