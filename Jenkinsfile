@@ -26,6 +26,7 @@ pipeline {
         }
         stage('Scan') {
             steps {
+		echo 'Scanning..'
 //                sh 'curl -s https://ci-tools.anchore.io/inline_scan-v0.3.3 | bash -s -- ${IMAGE_NAME}:ci'
             }
         }
