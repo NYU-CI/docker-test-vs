@@ -20,13 +20,13 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh 'docker build . -t ${IMAGE_NAME}:ci'
-		sh 'docker push ${IMAGE_NAME}:${GIT_COMMIT_HASH}'
+//		sh 'docker push ${IMAGE_NAME}:${GIT_COMMIT_HASH}'
 		sh 'docker push ${IMAGE_NAME}:candidate'
             }
         }
         stage('Scan') {
             steps {
-                sh 'curl -s https://ci-tools.anchore.io/inline_scan-v0.3.3 | bash -s -- ${IMAGE_NAME}:ci'
+//                sh 'curl -s https://ci-tools.anchore.io/inline_scan-v0.3.3 | bash -s -- ${IMAGE_NAME}:ci'
             }
         }
         stage('Test') {
@@ -59,7 +59,7 @@ pipeline {
 }
 
 node {
-  def imageLine = '441870321480.dkr.ecr.us-east-1.amazonaws.com/test-image-vuln-scan-base:${GIT_COMMIT_HASH}'
+  def imageLine = '${IMAGE_NAME}:${GIT_COMMIT_HASH}'
   writeFile file: 'anchore_images', text: imageLine
   anchore name: 'anchore_images'
 }
