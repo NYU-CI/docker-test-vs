@@ -28,7 +28,7 @@ pipeline {
 		echo 'Scanning..'
 //                sh 'curl -s https://ci-tools.anchore.io/inline_scan-v0.3.3 | bash -s -- ${IMAGE_NAME}:ci'
 		writeFile file: "anchore_images", text: "${IMAGE_NAME}:ci"
-	        anchore name: "anchore_images", engineurl: <anchore-engine-url>, engineCredentialsId: <jenkins-credentials-id>
+	        anchore name: "anchore_images", engineurl: <anchore-engine-url>, engineCredentialsId: anchore-engine
             }
         }
         stage('Test') {
