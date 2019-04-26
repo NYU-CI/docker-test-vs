@@ -6,21 +6,14 @@ pipeline {
         IMAGE_NAME = '441870321480.dkr.ecr.us-east-1.amazonaws.com/test-image-vuln-scan-base'
         IMAGE_TAG = 'latest'
 	GIT_COMMIT_HASH = sh (script: "git rev-parse --short `git log -n 1 --pretty=format:'%H'`", returnStdout: true)
+	GIT_COMMITER = $(git show -s --pretty=%an)
     }
 
     stages {
 	stage ('Start') {
 	      steps {
 		// send build started notifications
-		slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-
-		// send to email
-//		emailext (
-//		    subject: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-//		    body: """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-//		      <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
-//		    recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-//		  )
+		      slackSend (color: '#FFFF00', message: "STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}] by GitHub #${GIT_COMMIT_HASH} ${GIT_COMMITER}'  (${env.BUILD_URL})")
 	      }
 	}
         stage('Prepare') {
@@ -85,13 +78,6 @@ pipeline {
 	    }
 	    failure {
 	      slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-
-	      emailext (
-		  subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-		  body: """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
-		    <p>Check console output at &QUOT;<a href='${env.BUILD_URL}'>${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>&QUOT;</p>""",
-		  recipientProviders: [[$class: 'DevelopersRecipientProvider']]
-		)
 	    }
     }
 }
