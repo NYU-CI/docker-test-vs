@@ -59,9 +59,3 @@ pipeline {
         }
     }
 }
-
-node {
-  def imageLine = '441870321480.dkr.ecr.us-east-1.amazonaws.com/test-image-vuln-scan-base:ci'
-  writeFile file: 'anchore_images', text: imageLine
-  anchore name: 'anchore_images'
-}
