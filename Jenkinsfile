@@ -9,6 +9,16 @@ pipeline {
 	GIT_COMMITER = sh (script: "git show -s --pretty=%an", returnStdout: true)
     }
 
+	void setBuildStatus(String message, String state) {
+	  step([
+	      $class: "GitHubCommitStatusSetter",
+	      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/my-org/my-repo"],
+	      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+	      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+	      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+	  ]);
+	}
+	
     stages {
 	stage ('Start') {
 	      steps {
@@ -68,11 +78,11 @@ pipeline {
     post {
 	    success {
 	      slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})");
-//	      setBuildStatus("Build succeeded", "SUCCESS");
+	      setBuildStatus("Build succeeded", "SUCCESS");
 	    }
 	    failure {
 	      slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' by ${env.GIT_COMMITER} #${env.GIT_COMMIT_HASH} (${env.BUILD_URL})");    
-//	      setBuildStatus("Build failed", "FAILURE");
+	      setBuildStatus("Build failed", "FAILURE");
 	    }
     }
 }
