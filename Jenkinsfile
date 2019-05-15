@@ -28,7 +28,6 @@ pipeline {
         stage('Prepare') {
             steps {
                 echo 'Initializing submodules..'
-                sh 'ln -s local.env .env'
                 sh 'git submodule update --init --recursive'
             }
         }
